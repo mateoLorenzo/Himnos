@@ -23,13 +23,20 @@ export default function HymnDetailScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.number}>Himno {hymn.id}</Text>
-      <Text style={styles.title}>{hymn.title}</Text>
+      <View style={styles.headerSection}>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>#{hymn.id}</Text>
+        </View>
+        <Text style={styles.title}>{hymn.title}</Text>
+      </View>
+
+      <View style={styles.separator} />
 
       {hymn.verses.map((verse, index) => (
-        <Text key={index} style={styles.verse}>
-          {verse}
-        </Text>
+        <View key={index} style={styles.verseBlock}>
+          <Text style={styles.verseNumber}>{index + 1}</Text>
+          <Text style={styles.verse}>{verse}</Text>
+        </View>
       ))}
 
       {hymn.chorus && (
@@ -45,48 +52,80 @@ export default function HymnDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
   },
   content: {
-    padding: 24,
-    paddingBottom: 48,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 60,
   },
-  number: {
-    fontSize: 14,
-    color: "#999",
-    fontWeight: "500",
+  headerSection: {
+    marginBottom: 8,
+  },
+  badge: {
+    alignSelf: "flex-start",
+    backgroundColor: "#1A1A1A",
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 12,
+  },
+  badgeText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    fontVariant: ["tabular-nums"],
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700",
     color: "#1A1A1A",
-    marginTop: 4,
-    marginBottom: 24,
+    lineHeight: 32,
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "#E0E0E0",
+    marginVertical: 24,
+  },
+  verseBlock: {
+    flexDirection: "row",
+    marginBottom: 28,
+    gap: 14,
+  },
+  verseNumber: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#C0C0C0",
+    marginTop: 3,
+    width: 16,
+    textAlign: "right",
+    fontVariant: ["tabular-nums"],
   },
   verse: {
+    flex: 1,
     fontSize: 18,
     lineHeight: 30,
-    color: "#1A1A1A",
-    marginBottom: 24,
+    color: "#2A2A2A",
   },
   chorusContainer: {
     borderLeftWidth: 3,
-    borderLeftColor: "#E8E8E8",
-    paddingLeft: 16,
-    marginBottom: 24,
+    borderLeftColor: "#1A1A1A",
+    paddingLeft: 18,
+    marginLeft: 30,
+    marginBottom: 28,
   },
   chorusLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#999",
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#AAAAAA",
     textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 8,
+    letterSpacing: 1.5,
+    marginBottom: 10,
   },
   chorus: {
     fontSize: 18,
     lineHeight: 30,
-    color: "#1A1A1A",
+    color: "#2A2A2A",
     fontStyle: "italic",
   },
   notFound: {
