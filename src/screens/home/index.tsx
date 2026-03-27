@@ -11,6 +11,7 @@ const hymns = hymnsData as Hymn[];
 
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const { push } = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -30,6 +31,18 @@ export default function HomeScreen() {
     },
     [push],
   );
+
+  const toggleFavorite = useCallback((id: number) => {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -69,7 +82,20 @@ export default function HomeScreen() {
             <Text style={styles.title} numberOfLines={1}>
               {item.title}
             </Text>
-            <Ionicons name="chevron-forward" size={16} color="#CCC" />
+            <Pressable
+              onPress={() => toggleFavorite(item.id)}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={
+                favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"
+              }
+            >
+              <Ionicons
+                name={favorites.has(item.id) ? "heart" : "heart-outline"}
+                size={20}
+                color={favorites.has(item.id) ? "#E05555" : "#CCC"}
+              />
+            </Pressable>
           </Pressable>
         )}
         keyboardDismissMode="on-drag"

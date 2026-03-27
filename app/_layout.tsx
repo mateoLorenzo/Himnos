@@ -6,7 +6,15 @@ export default function RootLayout() {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="hymn/[id]" />
+        <Stack.Screen
+          name="hymn/[id]"
+          options={{
+            headerShown: true,
+            headerTitle: "",
+            headerBackTitle: "Atrás",
+            headerShadowVisible: false,
+          }}
+        />
       </Stack>
       <StatusBar style="light" />
     </>
