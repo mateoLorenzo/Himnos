@@ -1,6 +1,7 @@
 import { useSettingsStore } from "@/src/stores/settings";
+import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MIN_FONT = 14;
@@ -34,14 +35,31 @@ export default function SettingsScreen() {
           <Text style={styles.labelLarge}>A</Text>
         </View>
         <Text
-          style={[
-            styles.preview,
-            { fontSize, lineHeight: fontSize * 1.7 },
-          ]}
+          style={[styles.preview, { fontSize, lineHeight: fontSize * 1.7 }]}
         >
           Sublime gracia del Señor{"\n"}que a un infeliz salvó.
         </Text>
       </View>
+
+      <View style={styles.spacer} />
+
+      <Pressable
+        style={({ pressed }) => [
+          styles.contactButton,
+          pressed && styles.contactButtonPressed,
+        ]}
+        onPress={() =>
+          Linking.openURL(
+            "https://wa.me/5491140392404?text=Hola,%20tengo%20una%20sugerencia%20para%20la%20app%20Himnos",
+          )
+        }
+        accessibilityRole="button"
+        accessibilityLabel="Enviar sugerencia por WhatsApp"
+      >
+        <Ionicons name="logo-whatsapp" size={20} color="#FFFFFF" />
+        <Text style={styles.contactButtonText}>Enviar sugerencia</Text>
+      </Pressable>
+      <View style={{ height: 20 }} />
     </View>
   );
 }
@@ -93,5 +111,25 @@ const styles = StyleSheet.create({
   preview: {
     marginTop: 20,
     color: "#2A2A2A",
+  },
+  spacer: {
+    flex: 1,
+  },
+  contactButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#179130",
+    borderRadius: 14,
+    paddingVertical: 14,
+    gap: 10,
+  },
+  contactButtonPressed: {
+    opacity: 0.8,
+  },
+  contactButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });

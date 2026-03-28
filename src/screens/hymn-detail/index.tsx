@@ -19,37 +19,28 @@ export default function HymnDetailScreen() {
     );
   }
 
+  const textStyle = { fontSize, lineHeight: fontSize * 1.7 };
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.headerSection}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>#{hymn.id}</Text>
-        </View>
-        <Text style={styles.title}>{hymn.title}</Text>
-      </View>
-
+      <Text style={styles.title}>{hymn.title}</Text>
       <View style={styles.separator} />
 
       {hymn.verses.map((verse, index) => (
-        <View key={index} style={styles.verseBlock}>
-          <Text style={styles.verseNumber}>{index + 1}</Text>
-          <Text style={[styles.verse, { fontSize, lineHeight: fontSize * 1.7 }]}>
-            {verse}
-          </Text>
-        </View>
+        <Text key={index} style={[styles.verse, textStyle]}>
+          {verse}
+        </Text>
       ))}
 
       {hymn.chorus && (
-        <View style={styles.chorusContainer}>
-          <Text style={styles.chorusLabel}>Coro</Text>
-          <Text style={[styles.chorus, { fontSize, lineHeight: fontSize * 1.7 }]}>
-            {hymn.chorus}
-          </Text>
-        </View>
+        <Text style={[styles.verse, textStyle]}>
+          <Text style={styles.chorusLabel}>Coro:{"\n"}</Text>
+          {hymn.chorus}
+        </Text>
       )}
     </ScrollView>
   );
@@ -62,25 +53,8 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 24,
-    paddingTop: 20,
+    paddingTop: 16,
     paddingBottom: 60,
-  },
-  headerSection: {
-    marginBottom: 8,
-  },
-  badge: {
-    alignSelf: "flex-start",
-    backgroundColor: "#1A1A1A",
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginBottom: 12,
-  },
-  badgeText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#FFFFFF",
-    fontVariant: ["tabular-nums"],
   },
   title: {
     fontSize: 24,
@@ -89,50 +63,18 @@ const styles = StyleSheet.create({
     lineHeight: 32,
   },
   separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: "#E0E0E0",
-    marginVertical: 24,
-  },
-  verseBlock: {
-    flexDirection: "row",
+    height: 3,
+    backgroundColor: "#1A1A1A",
+    marginTop: 14,
     marginBottom: 28,
-    gap: 14,
-  },
-  verseNumber: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#C0C0C0",
-    marginTop: 3,
-    width: 16,
-    textAlign: "right",
-    fontVariant: ["tabular-nums"],
+    width: 50,
   },
   verse: {
-    flex: 1,
-    fontSize: 18,
-    lineHeight: 30,
-    color: "#2A2A2A",
-  },
-  chorusContainer: {
-    borderLeftWidth: 3,
-    borderLeftColor: "#1A1A1A",
-    paddingLeft: 18,
-    marginLeft: 30,
+    color: "#1A1A1A",
     marginBottom: 28,
   },
   chorusLabel: {
-    fontSize: 12,
     fontWeight: "700",
-    color: "#AAAAAA",
-    textTransform: "uppercase",
-    letterSpacing: 1.5,
-    marginBottom: 10,
-  },
-  chorus: {
-    fontSize: 18,
-    lineHeight: 30,
-    color: "#2A2A2A",
-    fontStyle: "italic",
   },
   notFound: {
     textAlign: "center",

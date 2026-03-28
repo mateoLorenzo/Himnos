@@ -1,10 +1,11 @@
 import hymnsData from "@/src/data/hymns.json";
+import { useFavoritesStore } from "@/src/stores/favorites";
 import { useSettingsStore } from "@/src/stores/settings";
 import { Hymn } from "@/src/types/hymn";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -12,7 +13,8 @@ const hymns = hymnsData as Hymn[];
 
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
-  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const favorites = useFavoritesStore((s) => s.ids);
+  const toggleFavorite = useFavoritesStore((s) => s.toggle);
   const fontSize = useSettingsStore((s) => s.fontSize);
   const { push } = useRouter();
   const insets = useSafeAreaInsets();
@@ -27,29 +29,15 @@ export default function HomeScreen() {
     });
   }, [search]);
 
-  const handlePress = useCallback(
-    (id: number) => {
-      push(`/hymn/${id}`);
-    },
-    [push],
-  );
+  const handlePress = (id: number) => {
+    push(`/hymn/${id}`);
+  };
 
-  const toggleFavorite = useCallback((id: number) => {
-    setFavorites((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
 
   return (
     <View style={styles.container}>
       <View style={[styles.headerSection, { paddingTop: insets.top + 12 }]}>
-        <Text style={styles.headerTitle}>Himnos</Text>
+        <Text style={styles.headerTitle}>Himnos y Canticos</Text>
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={16} color="rgba(255,255,255,0.5)" />
           <TextInput
@@ -89,7 +77,9 @@ export default function HomeScreen() {
               hitSlop={8}
               accessibilityRole="button"
               accessibilityLabel={
-                favorites.has(item.id) ? "Quitar de favoritos" : "Agregar a favoritos"
+                favorites.has(item.id)
+                  ? "Quitar de favoritos"
+                  : "Agregar a favoritos"
               }
             >
               <Ionicons
@@ -118,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFAFA",
   },
   headerSection: {
-    backgroundColor: "#1A1A1A",
+    backgroundColor: "#0c0c0c",
     paddingBottom: 20,
     paddingHorizontal: 20,
   },
