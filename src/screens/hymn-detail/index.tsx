@@ -1,4 +1,5 @@
 import hymnsData from "@/src/data/hymns.json";
+import { useSettingsStore } from "@/src/stores/settings";
 import { Hymn } from "@/src/types/hymn";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -7,6 +8,7 @@ const hymns = hymnsData as Hymn[];
 
 export default function HymnDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const fontSize = useSettingsStore((s) => s.fontSize);
   const hymn = hymns.find((h) => h.id === Number(id));
 
   if (!hymn) {
@@ -35,14 +37,18 @@ export default function HymnDetailScreen() {
       {hymn.verses.map((verse, index) => (
         <View key={index} style={styles.verseBlock}>
           <Text style={styles.verseNumber}>{index + 1}</Text>
-          <Text style={styles.verse}>{verse}</Text>
+          <Text style={[styles.verse, { fontSize, lineHeight: fontSize * 1.7 }]}>
+            {verse}
+          </Text>
         </View>
       ))}
 
       {hymn.chorus && (
         <View style={styles.chorusContainer}>
           <Text style={styles.chorusLabel}>Coro</Text>
-          <Text style={styles.chorus}>{hymn.chorus}</Text>
+          <Text style={[styles.chorus, { fontSize, lineHeight: fontSize * 1.7 }]}>
+            {hymn.chorus}
+          </Text>
         </View>
       )}
     </ScrollView>

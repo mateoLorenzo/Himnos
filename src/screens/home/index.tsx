@@ -1,4 +1,5 @@
 import hymnsData from "@/src/data/hymns.json";
+import { useSettingsStore } from "@/src/stores/settings";
 import { Hymn } from "@/src/types/hymn";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
@@ -12,6 +13,7 @@ const hymns = hymnsData as Hymn[];
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const fontSize = useSettingsStore((s) => s.fontSize);
   const { push } = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -79,7 +81,7 @@ export default function HomeScreen() {
             accessibilityLabel={`Himno ${item.id}, ${item.title}`}
           >
             <Text style={styles.number}>{item.id}</Text>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={[styles.title, { fontSize }]} numberOfLines={1}>
               {item.title}
             </Text>
             <Pressable
