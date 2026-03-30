@@ -1,15 +1,37 @@
 import hymnsData from "@/src/data/hymns.json";
 import { useSettingsStore } from "@/src/stores/settings";
 import { Hymn } from "@/src/types/hymn";
-import { useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLayoutEffect } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const hymns = hymnsData as Hymn[];
 
+const MIN_FONT = 14;
+const MAX_FONT = 28;
+
 export default function HymnDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const navigation = useNavigation();
   const fontSize = useSettingsStore((s) => s.fontSize);
+  const setFontSize = useSettingsStore((s) => s.setFontSize);
   const hymn = hymns.find((h) => h.id === Number(id));
+
+  const decreaseFont = () => {
+    if (fontSize > MIN_FONT) setFontSize(fontSize - 1);
+  };
+
+  const increaseFont = () => {
+    if (fontSize < MAX_FONT) setFontSize(fontSize + 1);
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerTitle: `#${id}` });
+  }, [navigation, id]);
+
+  const capitalizeLines = (text: string) =>
+    text.replace(/(^|\n)(.)/g, (_, sep, char) => sep + char.toUpperCase());
 
   if (!hymn) {
     return (
@@ -19,30 +41,78 @@ export default function HymnDetailScreen() {
     );
   }
 
-  const textStyle = { fontSize, lineHeight: fontSize * 1.7 };
+  const textStyle = {
+    fontFamily: "Lato-Regular",
+    fontSize,
+    lineHeight: fontSize * 1.5,
+    letterSpacing: -0.3,
+    color: "#111111",
+  };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.title}>{hymn.title}</Text>
-      <View style={styles.separator} />
+    <>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>{hymn.title}</Text>
+        <View style={styles.separator} />
 
-      {hymn.verses.map((verse, index) => (
-        <Text key={index} style={[styles.verse, textStyle]}>
-          {verse}
-        </Text>
-      ))}
+        {hymn.verses.map((verse, index) => (
+          <View key={index}>
+            <Text style={[styles.verse, textStyle]}>
+              {capitalizeLines(verse)}
+            </Text>
 
-      {hymn.chorus && (
-        <Text style={[styles.verse, textStyle]}>
-          <Text style={styles.chorusLabel}>Coro:{"\n"}</Text>
-          {hymn.chorus}
-        </Text>
-      )}
-    </ScrollView>
+            {hymn.chorus && index === 0 && (
+              <Text style={[styles.verse, textStyle]}>
+                <Text style={styles.chorusLabel}>Coro:{"\n"}</Text>
+                {capitalizeLines(hymn.chorus)}
+              </Text>
+            )}
+          </View>
+        ))}
+      </ScrollView>
+
+      <View style={styles.floatingButtons}>
+        <Pressable
+          style={[
+            styles.fontButton,
+            fontSize <= MIN_FONT && styles.fontButtonDisabled,
+          ]}
+          onPress={decreaseFont}
+          disabled={fontSize <= MIN_FONT}
+          hitSlop={16}
+          accessibilityLabel="Disminuir tamaño de fuente"
+          accessibilityRole="button"
+        >
+          <Image
+            source={require("@/assets/svg/zoom-out.svg")}
+            style={styles.zoomIcon}
+            tintColor={fontSize <= MIN_FONT ? "#CCC" : "#1A1A1A"}
+          />
+        </Pressable>
+
+        <Pressable
+          style={[
+            styles.fontButton,
+            fontSize >= MAX_FONT && styles.fontButtonDisabled,
+          ]}
+          onPress={increaseFont}
+          disabled={fontSize >= MAX_FONT}
+          hitSlop={16}
+          accessibilityLabel="Aumentar tamaño de fuente"
+          accessibilityRole="button"
+        >
+          <Image
+            source={require("@/assets/svg/zoom-in.svg")}
+            style={styles.zoomIcon}
+            tintColor={fontSize >= MAX_FONT ? "#CCC" : "#1A1A1A"}
+          />
+        </Pressable>
+      </View>
+    </>
   );
 }
 
@@ -65,21 +135,49 @@ const styles = StyleSheet.create({
   separator: {
     height: 3,
     backgroundColor: "#1A1A1A",
-    marginTop: 14,
-    marginBottom: 28,
-    width: 50,
+    marginTop: 8,
+    marginBottom: 32,
+    alignSelf: "stretch",
   },
   verse: {
-    color: "#1A1A1A",
-    marginBottom: 28,
+    marginBottom: 32,
   },
   chorusLabel: {
-    fontWeight: "700",
+    fontFamily: "Lato-Bold",
   },
   notFound: {
     textAlign: "center",
     marginTop: 48,
     fontSize: 16,
     color: "#999",
+  },
+  floatingButtons: {
+    position: "absolute",
+    bottom: 32,
+    left: 24,
+    right: 24,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    pointerEvents: "box-none",
+  },
+  fontButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#F5F5F5",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  fontButtonDisabled: {
+    opacity: 0.4,
+  },
+  zoomIcon: {
+    width: 32,
+    height: 32,
   },
 });
