@@ -1,8 +1,10 @@
+import ZoomInIcon from "@/assets/svg/zoom-in.svg";
+import ZoomOutIcon from "@/assets/svg/zoom-out.svg";
 import hymnsData from "@/src/data/hymns.json";
 import { useSettingsStore } from "@/src/stores/settings";
 import { Hymn } from "@/src/types/hymn";
-import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useLayoutEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -51,6 +53,7 @@ export default function HymnDetailScreen() {
 
   return (
     <>
+      <StatusBar style="dark" />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -87,10 +90,10 @@ export default function HymnDetailScreen() {
           accessibilityLabel="Disminuir tamaño de fuente"
           accessibilityRole="button"
         >
-          <Image
-            source={require("@/assets/svg/zoom-out.svg")}
-            style={styles.zoomIcon}
-            tintColor={fontSize <= MIN_FONT ? "#CCC" : "#1A1A1A"}
+          <ZoomOutIcon
+            width={32}
+            height={32}
+            stroke={fontSize <= MIN_FONT ? "#CCC" : "#1A1A1A"}
           />
         </Pressable>
 
@@ -105,10 +108,10 @@ export default function HymnDetailScreen() {
           accessibilityLabel="Aumentar tamaño de fuente"
           accessibilityRole="button"
         >
-          <Image
-            source={require("@/assets/svg/zoom-in.svg")}
-            style={styles.zoomIcon}
-            tintColor={fontSize >= MAX_FONT ? "#CCC" : "#1A1A1A"}
+          <ZoomInIcon
+            width={32}
+            height={32}
+            stroke={fontSize >= MAX_FONT ? "#CCC" : "#1A1A1A"}
           />
         </Pressable>
       </View>
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 24,
     paddingTop: 16,
-    paddingBottom: 60,
+    paddingBottom: 120,
   },
   title: {
     fontSize: 24,
@@ -175,9 +178,5 @@ const styles = StyleSheet.create({
   },
   fontButtonDisabled: {
     opacity: 0.4,
-  },
-  zoomIcon: {
-    width: 32,
-    height: 32,
   },
 });

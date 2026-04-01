@@ -5,6 +5,7 @@ import { Hymn } from "@/src/types/hymn";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -24,8 +25,9 @@ export default function FavoritesScreen() {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.headerSection}>
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <View style={[styles.headerSection, { paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>Favoritos</Text>
       </View>
 
@@ -60,9 +62,7 @@ export default function FavoritesScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="heart-outline" size={48} color="#CCC" />
-            <Text style={styles.emptyText}>
-              Aún no tenés himnos favoritos
-            </Text>
+            <Text style={styles.emptyText}>Aún no tenés himnos favoritos</Text>
             <Text style={styles.emptySubtext}>
               Tocá el corazón en un himno para guardarlo acá
             </Text>
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFAFA",
   },
   headerSection: {
-    backgroundColor: "#1A1A1A",
+    backgroundColor: "#000",
     paddingBottom: 20,
     paddingHorizontal: 20,
     paddingTop: 12,

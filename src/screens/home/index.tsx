@@ -1,3 +1,4 @@
+import SearchIcon from "@/assets/svg/search.svg";
 import hymnsData from "@/src/data/hymns.json";
 import { useFavoritesStore } from "@/src/stores/favorites";
 import { useSettingsStore } from "@/src/stores/settings";
@@ -35,18 +36,19 @@ export default function HomeScreen() {
     const queryNum = parseInt(query, 10);
     const normQuery = stripAccents(query);
 
-    const matches: { hymn: Hymn; snippet: string }[] = [];
+    const titleMatches: { hymn: Hymn; snippet: string }[] = [];
+    const lyricsMatches: { hymn: Hymn; snippet: string }[] = [];
 
     for (const h of hymns) {
       // Match by number
-      if (!isNaN(queryNum) && h.id === queryNum) {
-        matches.push({ hymn: h, snippet: "" });
+      if (!isNaN(queryNum) && String(h.id).includes(query)) {
+        titleMatches.push({ hymn: h, snippet: "" });
         continue;
       }
 
       // Match by title
       if (stripAccents(h.title.toLowerCase()).includes(normQuery)) {
-        matches.push({ hymn: h, snippet: "" });
+        titleMatches.push({ hymn: h, snippet: "" });
         continue;
       }
 
@@ -59,11 +61,11 @@ export default function HomeScreen() {
         const start = allText.lastIndexOf("\n", idx) + 1;
         const end = allText.indexOf("\n", idx + normQuery.length);
         const line = allText.slice(start, end === -1 ? undefined : end).trim();
-        matches.push({ hymn: h, snippet: line });
+        lyricsMatches.push({ hymn: h, snippet: line });
       }
     }
 
-    return matches;
+    return [...titleMatches, ...lyricsMatches];
   }, [search]);
 
   const handlePress = (id: number) => {
@@ -152,6 +154,7 @@ export default function HomeScreen() {
         data={results}
         keyExtractor={(item) => item.hymn.id.toString()}
         renderItem={renderItem}
+        drawDistance={300}
         keyboardDismissMode="on-drag"
         ListEmptyComponent={listEmptyComponent}
       />
@@ -161,12 +164,18 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={[styles.headerSection, { paddingTop: insets.top + 12 }]}>
         <Text style={styles.headerTitle}>Himnos y Canticos</Text>
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={16} color="rgba(255,255,255,0.5)" />
+        <Text style={styles.headerSubtitle}>del Evangelio</Text>
+        <View
+          style={[
+            styles.searchContainer,
+            isSearching && styles.searchContainerActive,
+          ]}
+        >
+          <SearchIcon width={20} height={20} stroke={isSearching ? "#FFFFFF" : "#999"} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar por nombre, número o letra..."
-            placeholderTextColor="rgba(255,255,255,0.4)"
+            placeholderTextColor="#999"
             value={search}
             onChangeText={setSearch}
             autoCorrect={false}
@@ -177,6 +186,22 @@ export default function HomeScreen() {
           />
         </View>
       </View>
+
+      {isSearching && (
+        <View style={styles.filterBanner}>
+          <Text style={styles.filterText}>
+            {results.length} resultado{results.length !== 1 ? "s" : ""} para &ldquo;{search.trim()}&rdquo;
+          </Text>
+          <Pressable
+            onPress={() => setSearch("")}
+            hitSlop={8}
+            accessibilityLabel="Limpiar búsqueda"
+            accessibilityRole="button"
+          >
+            <Ionicons name="close-circle" size={18} color="#888" />
+          </Pressable>
+        </View>
+      )}
 
       {renderList()}
     </View>
@@ -195,8 +220,15 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 26,
-    fontWeight: "700",
+    fontFamily: "PlayfairDisplay-Italic",
     color: "#FFFFFF",
+    textAlign: "center",
+    marginBottom: 2,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    fontFamily: "PlayfairDisplay-Italic",
+    color: "rgba(255,255,255,0.6)",
     textAlign: "center",
     marginBottom: 16,
   },
@@ -207,6 +239,27 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     gap: 10,
+    borderWidth: 1.5,
+    borderColor: "transparent",
+  },
+  searchContainerActive: {
+    borderColor: "rgba(255,255,255,0.6)",
+    backgroundColor: "rgba(255,255,255,0.18)",
+  },
+  filterBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: "#F0F0F0",
+    borderBottomWidth: 1,
+    borderBottomColor: "#CCC",
+  },
+  filterText: {
+    fontSize: 13,
+    color: "#666",
+    flex: 1,
   },
   searchInput: {
     flex: 1,
@@ -227,10 +280,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
   },
   number: {
-    fontSize: 15,
-    color: "#AAAAAA",
+    fontSize: 14,
+    color: "#999",
     width: 46,
-    fontWeight: "500",
+    fontWeight: "400",
     fontVariant: ["tabular-nums"],
   },
   textContainer: {

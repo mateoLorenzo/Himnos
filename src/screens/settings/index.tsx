@@ -57,7 +57,7 @@ export default function SettingsScreen() {
         accessibilityLabel="Enviar sugerencia por WhatsApp"
       >
         <Ionicons name="logo-whatsapp" size={20} color="#FFFFFF" />
-        <Text style={styles.contactButtonText}>Enviar sugerencia</Text>
+        <Text style={styles.contactButtonText}>Enviar sugerencias</Text>
       </Pressable>
       <View style={{ height: 20 }} />
     </View>
